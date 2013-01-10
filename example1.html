@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css" media="screen">
+        #editor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 400px;
+            width: 800px;
+        }
+        #term {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 150px;
+            width: 800px;
+            background-color: #2f3129;
+            color: #f1f1f1;
+            padding: 2px;
+        }
+        #out {
+            width: 800px;
+            height: 134px;
+            overflow: scroll;
+            font-family: Consolas, "Courier New";
+        }
+        a#runBtn {
+            font-size: 12px;
+        }
+        a#runBtn, a#runBtn:active, a#runBtn:visited {
+            text-decoration: none;
+            color: #f1f1f1;
+        }
+        a#runBtn:hover {
+            text-decoration: none;
+            color: #66D9EF;
+        }
+        #out p {
+            margin: 2px;
+        }
+        p.error {
+            color: red;
+        }
+        p.warn {
+            color: orange;
+        }
+        p.log {
+            color: #f5f5f5;
+        }
+    </style>
+    <link rel="stylesheet" href="css/font-awesome.css"/>
+</head>
+<body>
+
+<div id="editor">var i = 1;
+console.log("i is a number: i="+ i + " ("+ typeof(i) + ")");
+i = i + "";
+console.log("i is now a string: i="+ i + " ("+ typeof(i) + ")");
+i = i + 1;
+console.log("Adding strings concatinate stuff: "+ i + " ("+ typeof(i) + ")");
+i = i - 1;
+console.log("i has magically become a number again: i="+ i + " ("+ typeof(i) + ")");</div>
+<div id="term">
+    <a id="runBtn" href="#"><i class="icon-play"></i></a>
+    <div id="out"></div>
+</div>
+
+    <script src="libs/js/ace.js" data-ace-base="libs/js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/javascript");
+</script>
+<script src="libs/js/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function() {
+        var $out = $("#out");
+        var editor = ace.edit("editor");
+        $("#runBtn").click(function(e) {
+            try {
+                (function(editor, console) {
+                    eval(editor.getSession().getValue());
+                })(editor, {
+                    log: function(text) {
+                        $out.append("<p class='log'>Log: " + text + "</p>");
+                    },
+                    warn: function(text) {
+                        $out.append("<p class='warn'>Warn: " + text + "</p>");
+                    },
+                    error: function(text) {
+                        $out.append("<p class='log'>Log: " + text + "</p>");
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+            }
+            $out.scrollTop($out.prop("scrollHeight"));
+        });
+    });
+
+</script>
+</body>
+</html>
